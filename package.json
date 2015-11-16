@@ -1,0 +1,33 @@
+{
+  "name": "cordova-plugin-searchableitem",
+  "version": "0.1.0",
+  "description": "Enable on-device searchable app content indexing.",
+  "cordova": {
+    "id": "cordova-plugin-searchableitem",
+    "platforms": [
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/..."
+  },
+  "keywords": [
+    "CSSearchableItem",
+    "Index App Content",
+    "Core Spotlight",
+    "ecosystem:cordova",
+    "cordova-ios"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.5.0"
+    }
+  ],
+  "author": "Johan Blomgren <johan.blomgren@leogears.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/.../issues"
+  }
+}

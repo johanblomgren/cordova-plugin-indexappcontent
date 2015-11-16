@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<plugin
+    id="cordova-plugin-searchableitem"
+    version="0.1.0"
+    xmlns="http://apache.org/cordova/ns/plugins/1.0">
+
+  <name>Index App Content</name>
+
+  <author>Johan Blomgren</author>
+
+  <description>Enable on-device searchable app content indexing.</description>
+
+  <keywords>CSSearchableItem, Index App Content, Core Spotlight</keywords>
+
+  <license>MIT</license>
+
+  <engines>
+    <engine name="cordova" version=">=3.5.0"/>
+  </engines>
+
+  <js-module name="IndexAppContent" src="www/IndexAppContent.js">
+    <clobbers target="IndexAppContent"/>
+  </js-module>
+
+  <platform name="ios">
+    
+    <config-file parent="/*" target="config.xml">
+      <feature name="IndexAppContent">
+        <param name="ios-package" value="IndexAppContent"/>
+        <param name="onload" value="true"/>
+      </feature>
+    </config-file>
+
+    <header-file src="src/ios/app/IndexAppContent.h"/>
+    <source-file src="src/ios/app/IndexAppContent.m"/>
+    <header-file src="src/ios/app/AppDelegate+IndexAppContent.h"/>
+    <source-file src="src/ios/app/AppDelegate+IndexAppContent.m"/>
+    
+    <framework src="MobileCoreServices.framework" />
+    <framework src="CoreSpotlight.framework" />
+    
+  </platform>
+
+</plugin>

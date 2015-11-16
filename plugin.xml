@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <plugin
-    id="cordova-plugin-searchableitem"
+    id="cordova-plugin-indexappcontent"
     version="0.1.0"
     xmlns="http://apache.org/cordova/ns/plugins/1.0">
 

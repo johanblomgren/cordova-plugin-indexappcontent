@@ -35,7 +35,7 @@
     [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:@[searchableItems] completionHandler:^(NSError * _Nullable error) {
         if (error) {
             NSLog(@"%@", error);
-            [self.commandDelegate sendPluginResult:[CDVPluginResult CDVCommandStatus_ERROR] callbackId:command.callbackId];
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR] callbackId:command.callbackId];
         } else {
             NSLog(@"Index saved");
             [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];

@@ -8,7 +8,7 @@
 @implementation AppDelegate (IndexAppContent)
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity restorationHandler:(nonnull void (^)(NSArray * _Nullable))restorationHandler
-
+{
     if ([userActivity.activityType isEqualToString:CSSearchableItemActionType]) {
         // Get the item identifier and use it
         NSString *identifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];

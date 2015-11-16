@@ -20,7 +20,7 @@
     }
 }
 
-- (void) callJavascriptFunctionWhenAvailable:(NSString*)function {
+- (void)callJavascriptFunctionWhenAvailable:(NSString *)function {
   IndexAppContent *indexAppContent = [self.viewController getCommandInstance:@"IndexAppContent"];
     
   if (indexAppContent.initDone) {

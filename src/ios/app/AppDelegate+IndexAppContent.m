@@ -3,14 +3,12 @@
 #import <objc/runtime.h>
 #import "MainViewController.h"
 
-#define kINTERVAL 25
-
 @implementation AppDelegate (IndexAppContent)
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity restorationHandler:(nonnull void (^)(NSArray * _Nullable))restorationHandler
 {
     if ([userActivity.activityType isEqualToString:CSSearchableItemActionType]) {
-        // Get the item identifier and use it
+        // Get the item identifier and send it
         NSString *identifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
         
         NSString *jsFunction = @"IndexAppContent.onItemPressed";
@@ -18,18 +16,27 @@
         NSString *result = [NSString stringWithFormat:@"%@(%@)", jsFunction, params];
         [self callJavascriptFunctionWhenAvailable:result];
     }
+    
+    return YES;
 }
 
 - (void)callJavascriptFunctionWhenAvailable:(NSString *)function {
-  IndexAppContent *indexAppContent = [self.viewController getCommandInstance:@"IndexAppContent"];
+    IndexAppContent *indexAppContent = [self.viewController getCommandInstance:@"IndexAppContent"];
     
-  if (indexAppContent.initDone) {
-    [indexAppContent.webView stringByEvaluatingJavaScriptFromString:function];
-  } else {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, kINTERVAL * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
-      [self callJavascriptFunctionWhenAvailable:function];
-    });
-  }
+        if (indexAppContent.initDone) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                [self sendCommand:function webView:indexAppContent.webView];
+            });
+        } else {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 25 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+                [self callJavascriptFunctionWhenAvailable:function];
+            });
+        }
+}
+
+- (void)sendCommand:(NSString *)command webView:(UIWebView *)webView
+{
+    [webView stringByEvaluatingJavaScriptFromString:command];
 }
 
 @end

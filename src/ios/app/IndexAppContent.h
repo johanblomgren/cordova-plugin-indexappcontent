@@ -9,5 +9,6 @@
 - (void)deviceIsReady:(CDVInvokedUrlCommand *)command;
 
 - (void)setItems:(CDVInvokedUrlCommand *)command;
+- (void)clearItemsForDomains:(CDVInvokedUrlCommand *)command;
 
 @end

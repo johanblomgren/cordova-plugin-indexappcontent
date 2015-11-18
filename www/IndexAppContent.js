@@ -4,6 +4,10 @@ cordova.define("cordova-plugin-indexappcontent.IndexAppContent", function(requir
   var IndexAppContent = function () {
   };
 
+  IndexAppContent.prototype.init = function (onSuccess, onError) {
+    exec(null, null, "IndexAppContent", "deviceIsReady", []);
+  };
+
   IndexAppContent.prototype.setItems = function (items, onSuccess, onError) {
     exec(onSuccess, onError, "IndexAppContent", "setItems", [items]);
   };
@@ -12,15 +16,9 @@ cordova.define("cordova-plugin-indexappcontent.IndexAppContent", function(requir
     exec(onSuccess, onError, "IndexAppContent", "clearItemsForDomains", [domains]);
   };
   
-  IndexAppContent.prototype.init = function (items, onSuccess, onError) {
-    exec(null, null, "IndexAppContent", "deviceIsReady", []);
+  IndexAppContent.prototype.setIndexingInterval = function (interval, onSuccess, onError) {
+    exec(onSuccess, onError, "IndexAppContent", "setIndexingInterval", [interval]);
   };
 
   module.exports = new IndexAppContent();
-
-  // call the plugin as soon as deviceready fires, this makes sure the webview is loaded,
-  // way more solid than relying on native's pluginInitialize.
-  // document.addEventListener('deviceready', function() {
-  //   exec(null, null, "IndexAppContent", "deviceIsReady", []);
-  // }, false);
 });

@@ -11,15 +11,31 @@
 @end
 
 #define kINDEX_TIMESTAMP_KEY @"kINDEX_TIMESTAMP_KEY"
-#define kDEFAULT_INDEXING_INTERVAL 1
+#define kINDEXING_INTERVAL_KEY @"kINDEXING_INTERVAL_KEY"
+
+#define kDEFAULT_INDEXING_INTERVAL 1440 // Minutes
 
 @implementation IndexAppContent
 
-- (void)deviceIsReady:(CDVInvokedUrlCommand *)command {
+#pragma mark - Public
+
+- (void)deviceIsReady:(CDVInvokedUrlCommand *)command
+{
   self.initDone = YES;
 }
 
-- (void)setItems:(CDVInvokedUrlCommand *)command {
+- (void)pluginInitialize
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+}
+
+- (void)setItems:(CDVInvokedUrlCommand *)command
+{
     
     if (![self _shouldUpdateIndex]) {
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Will not update index"] callbackId:command.callbackId];
@@ -30,7 +46,7 @@
     _group = dispatch_group_create();
     _queue = dispatch_queue_create("com.appindexcontent.group", NULL);
     
-    NSDictionary *items = [command.arguments objectAtIndex:0];
+    NSArray *items = [command.arguments objectAtIndex:0];
     
     __block NSMutableArray *searchableItems = [[NSMutableArray alloc] init];
     
@@ -42,15 +58,25 @@
             NSString *description = [item objectForKey:@"description"];
             NSString *url = [item objectForKey:@"url"];
             
+            // Optional
+            NSNumber *rating = [NSNumber numberWithInteger:[[item objectForKey:@"rating"] integerValue]];
+            NSArray *keywords = [item objectForKey:@"keywords"];
+            NSInteger lifetime = [[item objectForKey:@"lifetime"] integerValue];
+            
             NSLog(@"Indexing %@", title);
             
             CSSearchableItemAttributeSet *attributes = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:(__bridge NSString *)kUTTypeText];
             
             attributes.title = title;
             attributes.contentDescription = description;
-            attributes.thumbnailData = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]]; // Synchronous, rewrite!
+            attributes.thumbnailData = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
+            attributes.displayName = title;
+            attributes.rating = rating;
+            attributes.keywords = keywords;
             
             CSSearchableItem *item = [[CSSearchableItem alloc] initWithUniqueIdentifier:identifier domainIdentifier:domain attributeSet:attributes];
+            item.expirationDate = lifetime ? [self _dateByMinuteOffset:lifetime] : nil;
+            
             [searchableItems addObject:item];
         });
     }
@@ -61,12 +87,11 @@
                 NSLog(@"%@", error);
                 [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR] callbackId:command.callbackId];
             } else {
-                NSLog(@"Indexing complete");
+                NSLog(@"Indexing complete. Next indexing at %@", [self _getTimestamp]);
                 [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
             }
         }];
     });
-    
 }
 
 - (void)clearItemsForDomains:(CDVInvokedUrlCommand *)command
@@ -83,6 +108,26 @@
         }
     }];
 }
+
+- (void)setIndexingInterval:(CDVInvokedUrlCommand *)command
+{
+    NSInteger interval = [[command.arguments objectAtIndex:0] integerValue];
+    
+    if ([self _setIndexingInterval:interval]) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
+    } else {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR] callbackId:command.callbackId];
+    }
+}
+
+#pragma mark - Notifications
+
+- (void)handleApplicationDidEnterBackground:(NSNotification *)notification
+{
+    self.initDone = NO;
+}
+
+#pragma mark - Private
 
 - (BOOL)_shouldUpdateIndex
 {
@@ -101,13 +146,18 @@
 
 - (void)_setTimestamp
 {
-    NSDateComponents *minuteComponent = [[NSDateComponents alloc] init];
-    minuteComponent.minute = [self _indexingInterval];
-    
-    NSDate *nextDate = [[NSCalendar currentCalendar] dateByAddingComponents:minuteComponent toDate:[NSDate date] options:0];
+    NSDate *nextDate = [self _dateByMinuteOffset:[self _getIndexingInterval]];
     
     [[NSUserDefaults standardUserDefaults] setObject:nextDate forKey:kINDEX_TIMESTAMP_KEY];
     [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (NSDate *)_dateByMinuteOffset:(NSInteger)minuteOffset
+{
+    NSDateComponents *minuteComponent = [[NSDateComponents alloc] init];
+    minuteComponent.minute = minuteOffset;
+    
+    return [[NSCalendar currentCalendar] dateByAddingComponents:minuteComponent toDate:[NSDate date] options:0];
 }
 
 - (NSDate *)_getTimestamp
@@ -115,12 +165,23 @@
     return [[NSUserDefaults standardUserDefaults] objectForKey:kINDEX_TIMESTAMP_KEY];
 }
 
-- (NSInteger)_indexingInterval
+- (NSInteger)_getIndexingInterval
 {
-    NSDictionary *settings = self.commandDelegate.settings;
-    NSInteger interval = [[settings objectForKey:@"com.appindexcontent.indexinterval"] integerValue];
+    NSInteger interval = [[[NSUserDefaults standardUserDefaults] objectForKey:kINDEXING_INTERVAL_KEY] integerValue];
     
     return interval ? interval : kDEFAULT_INDEXING_INTERVAL;
+}
+
+- (BOOL)_setIndexingInterval:(NSInteger)interval
+{
+    if (!interval) {
+        return NO;
+    }
+    
+    [[NSUserDefaults standardUserDefaults] setObject:@(interval) forKey:kINDEXING_INTERVAL_KEY];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    return YES;
 }
 
 @end

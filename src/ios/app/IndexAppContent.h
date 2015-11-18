@@ -7,8 +7,8 @@
 @property BOOL initDone;
 
 - (void)deviceIsReady:(CDVInvokedUrlCommand *)command;
-
 - (void)setItems:(CDVInvokedUrlCommand *)command;
 - (void)clearItemsForDomains:(CDVInvokedUrlCommand *)command;
+- (void)setIndexingInterval:(CDVInvokedUrlCommand *)command;
 
 @end

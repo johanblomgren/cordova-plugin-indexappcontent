@@ -10,8 +10,10 @@
 
 @end
 
+#define kGROUP_IDENTIFIER "com.appindexcontent.group"
+
 #define kINDEX_TIMESTAMP_KEY @"kINDEX_TIMESTAMP_KEY"
-#define kINDEXING_INTERVAL_KEY @"kINDEXING_INTERVAL_KEY"
+#define kINDEXING_INTERVAL_KEY @"kINDEX_INTERVAL_KEY"
 
 #define kDEFAULT_INDEXING_INTERVAL 1440 // Minutes
 
@@ -44,9 +46,9 @@
     }
     
     _group = dispatch_group_create();
-    _queue = dispatch_queue_create("com.appindexcontent.group", NULL);
+    _queue = dispatch_queue_create(kGROUP_IDENTIFIER, NULL);
     
-    NSArray *items = [command.arguments objectAtIndex:0];
+    NSArray *items = [command.arguments firstObject];
     
     __block NSMutableArray *searchableItems = [[NSMutableArray alloc] init];
     
@@ -96,7 +98,7 @@
 
 - (void)clearItemsForDomains:(CDVInvokedUrlCommand *)command
 {
-    NSArray *domains = [command.arguments objectAtIndex:0];
+    NSArray *domains = [command.arguments firstObject];
     
     [[CSSearchableIndex defaultSearchableIndex] deleteSearchableItemsWithDomainIdentifiers:domains completionHandler:^(NSError * _Nullable error) {
         if (error) {
@@ -111,7 +113,7 @@
 
 - (void)setIndexingInterval:(CDVInvokedUrlCommand *)command
 {
-    NSInteger interval = [[command.arguments objectAtIndex:0] integerValue];
+    NSInteger interval = [[command.arguments firstObject] integerValue];
     
     if ([self _setIndexingInterval:interval]) {
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
@@ -124,7 +126,7 @@
 
 - (void)handleApplicationDidEnterBackground:(NSNotification *)notification
 {
-    self.initDone = NO;
+    //self.initDone = NO;
 }
 
 #pragma mark - Private

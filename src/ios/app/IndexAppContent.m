@@ -3,6 +3,9 @@
 #import "UIKit/UITouch.h"
 #import "IndexAppContent.h"
 
+NSString *kIndexAppContentDelayExecutionNotification = @"kIndexAppContentDelayExecutionNotification";
+NSString *kIndexAppContentExecutionDelayKey = @"kIndexAppContentExecutionDelayKey";
+
 @interface IndexAppContent () {
     dispatch_group_t _group;
     dispatch_queue_t _queue;
@@ -28,12 +31,14 @@
 
 - (void)pluginInitialize
 {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleIndexAppContentDelayExecutionNotification:) name:kIndexAppContentDelayExecutionNotification object:nil];
+    
+    self.ready = YES;
 }
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kIndexAppContentDelayExecutionNotification object:nil];
 }
 
 - (void)setItems:(CDVInvokedUrlCommand *)command
@@ -124,9 +129,16 @@
 
 #pragma mark - Notifications
 
-- (void)handleApplicationDidEnterBackground:(NSNotification *)notification
+- (void)handleIndexAppContentDelayExecutionNotification:(NSNotification *)notification
 {
-    //self.initDone = NO;
+    float delay = [notification.userInfo[kIndexAppContentExecutionDelayKey] floatValue];
+    
+    self.ready = NO;
+    
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC);
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        self.ready = YES;
+    });
 }
 
 #pragma mark - Private

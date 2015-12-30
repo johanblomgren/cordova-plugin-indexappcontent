@@ -24,8 +24,8 @@
 - (void)callJavascriptFunctionWhenAvailable:(NSString *)function {
     IndexAppContent *indexAppContent = [self.viewController getCommandInstance:@"IndexAppContent"];
     
-        if (indexAppContent.initDone) {
-                [self sendCommand:function webView:indexAppContent.webView];
+        if (indexAppContent.initDone && indexAppContent.ready) {
+            [self sendCommand:function webView:indexAppContent.webView];
         } else {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, kCALL_DELAY_MILLISECONDS * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
                 [self callJavascriptFunctionWhenAvailable:function];

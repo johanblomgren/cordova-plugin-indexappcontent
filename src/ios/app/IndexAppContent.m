@@ -1,3 +1,10 @@
+//
+//  IndexAppContent.h
+//
+//  Created by Johan Blomgren on 12/02/16.
+//
+//
+
 #import "Cordova/CDV.h"
 #import "Cordova/CDVViewController.h"
 #import "UIKit/UITouch.h"

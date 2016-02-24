@@ -1,3 +1,10 @@
+//
+//  AppDelegate+IndexAppContent.h
+//
+//  Created by Johan Blomgren on 12/02/16.
+//
+//
+
 #import "AppDelegate.h"
 
 @interface AppDelegate (IndexAppContent)

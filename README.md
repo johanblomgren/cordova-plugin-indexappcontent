@@ -27,7 +27,7 @@ Calling ``window.plugins.indexAppContent.init()`` will explicitly tell the nativ
 Example:
 
 ```
-var myItems = [
+var items = [
     {
         domain: 'com.my.domain',
         identifier: '88asdf7dsf',

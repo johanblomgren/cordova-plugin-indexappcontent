@@ -1,6 +1,6 @@
 ## Installation
- * Install using ``cordova`` CLI.
-   * Run ``cordova plugin add https://github.com/johanblomgren/cordova-plugin-indexappcontent.git``
+ Install using ``cordova`` CLI.
+ * Run ``cordova plugin add https://github.com/johanblomgren/cordova-plugin-indexappcontent.git``
 
 ## Usage
 Plugin should be installed on ``window.plugins.indexAppContent``.
@@ -49,7 +49,6 @@ window.plugins.indexAppContent.setItems(items, function() {
     }, function(error) {
         // Handle error
     });
-
 ```
 
 Image data will be downloaded and stored in the background.

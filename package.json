@@ -25,7 +25,7 @@
       "version": ">=3.5.0"
     }
   ],
-  "author": "Johan Blomgren <johan.blomgren@leogears.com>",
+  "author": "Johan Blomgren <j.blomgr@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/johanblomgren/cordova-plugin-indexappcontent/issues"

@@ -1,4 +1,4 @@
-cordova.define("cordova-plugin-indexappcontent.IndexAppContent", function(require, exports, module) {
+cordova.define("cordova-plugin-indexappcontent", function(require, exports, module) {
   var exec = require("cordova/exec");
 
   var IndexAppContent = function () {

@@ -1,3 +1,10 @@
+//
+//  IndexAppContent.h
+//
+//  Created by Johan Blomgren on 12/02/16.
+//
+//
+
 #import <Cordova/CDVPlugin.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <CoreSpotlight/CoreSpotlight.h>

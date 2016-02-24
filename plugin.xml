@@ -19,7 +19,7 @@
   </engines>
 
   <js-module name="IndexAppContent" src="www/IndexAppContent.js">
-    <clobbers target="IndexAppContent"/>
+    <clobbers target="plugins.indexAppContent"/>
   </js-module>
 
   <platform name="ios">

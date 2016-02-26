@@ -15,7 +15,7 @@ Calling ``window.plugins.indexAppContent.init()`` will explicitly tell the nativ
     domain: 'com.my.domain',
     identifier: '88asdf7dsf',
     title: 'Foo',
-    description; 'Bar',
+    description: 'Bar',
     url: 'http://location/of/my/image.jpg',
     keywords: ['This', 'is', 'optional'], // Item keywords (optional)
     lifetime: 1440 // Lifetime in minutes (optional)
@@ -32,14 +32,14 @@ var items = [
         domain: 'com.my.domain',
         identifier: '88asdf7dsf',
         title: 'Foo',
-        description; 'Bar',
+        description: 'Bar',
         url: 'http://location/of/my/image.jpg',
     },
     {
         domain: 'com.other.domain',
         identifier: '9asd67g6a',
         title: 'Baz',
-        description; 'Woot',
+        description: 'Woot',
         url: 'http://location/of/my/image2.jpg',
     }
 ];

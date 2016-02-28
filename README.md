@@ -63,6 +63,7 @@ window.plugins.indexAppContent.onItemPressed = function(payload) {
 ```
 
 This handler will be called when launching the app by pressing an item in spotlight search results.
+
 NOTE: Set this handler before calling ``window.plugins.indexAppContent.init()``. A call to ``init()`` will tell the native code that the handler is ready to be used when the app is launched by tapping on a search result.
 
 ### Clear items

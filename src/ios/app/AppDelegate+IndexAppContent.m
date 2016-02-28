@@ -19,7 +19,7 @@
         // Get the item identifier and use it
         NSString *identifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
         
-        NSString *jsFunction = @"IndexAppContent.onItemPressed";
+        NSString *jsFunction = @"window.plugins.indexAppContent.onItemPressed";
         NSString *params = [NSString stringWithFormat:@"{'identifier':'%@'}", identifier];
         NSString *result = [NSString stringWithFormat:@"%@(%@)", jsFunction, params];
         [self callJavascriptFunctionWhenAvailable:result];

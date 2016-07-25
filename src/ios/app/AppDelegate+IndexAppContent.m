@@ -7,7 +7,6 @@
 
 #import "AppDelegate+IndexAppContent.h"
 #import "IndexAppContent.h"
-#import "MainViewController.h"
 
 #define kCALL_DELAY_MILLISECONDS 25
 

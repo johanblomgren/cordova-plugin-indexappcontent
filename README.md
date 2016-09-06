@@ -74,7 +74,7 @@ Example:
 ```
 window.plugins.indexAppContent.clearItemsForDomains(['com.my.domain', 'com.my.other.domain'], function() {
     console.log('Items removed');
-    }), function(error) {
+    }, function(error) {
         // Handle error
     });
 

@@ -118,6 +118,7 @@ NSString *kIndexAppContentExecutionDelayKey = @"kIndexAppContentExecutionDelayKe
             [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR] callbackId:command.callbackId];
         } else {
             NSLog(@"Index removed for domains %@", domains);
+            [self _clearTimestamp];
             [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
         }
     }];
@@ -184,6 +185,11 @@ NSString *kIndexAppContentExecutionDelayKey = @"kIndexAppContentExecutionDelayKe
 - (NSDate *)_getTimestamp
 {
     return [[NSUserDefaults standardUserDefaults] objectForKey:kINDEX_TIMESTAMP_KEY];
+}
+
+- (void)_clearTimestamp
+{
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kINDEX_TIMESTAMP_KEY];
 }
 
 - (NSInteger)_getIndexingInterval

@@ -80,6 +80,19 @@ window.plugins.indexAppContent.clearItemsForDomains(['com.my.domain', 'com.my.ot
 
 ```
 
+Call ``window.plugins.indexAppContent.clearItemsForIdentifiers(identifiers, success, error)`` to clear all items stored for a given array of identifiers.
+
+Example:
+
+```
+window.plugins.indexAppContent.clearItemsForIdentifiers(['id1', 'id2'], function() {
+    console.log('Items removed');
+    }, function(error) {
+        // Handle error
+    });
+
+```
+
 ### Set indexing interval
 
 Call ``window.plugins.indexAppContent.setIndexingInterval(interval, success, error)`` to configure the interval (in minutes) for how often indexing should be allowed.

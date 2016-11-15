@@ -14,6 +14,10 @@ IndexAppContent.prototype.clearItemsForDomains = function (domains, onSuccess, o
 	exec(onSuccess, onError, "IndexAppContent", "clearItemsForDomains", [domains]);
 };
 
+IndexAppContent.prototype.clearItemsForIdentifiers = function (identifiers, onSuccess, onError) {
+	exec(onSuccess, onError, "IndexAppContent", "clearItemsForIdentifiers", [identifiers]);
+};
+
 IndexAppContent.prototype.setIndexingInterval = function (interval, onSuccess, onError) {
 	exec(onSuccess, onError, "IndexAppContent", "setIndexingInterval", [interval]);
 };

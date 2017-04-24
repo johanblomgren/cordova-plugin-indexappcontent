@@ -28,20 +28,28 @@
 }
 
 - (void)callJavascriptFunctionWhenAvailable:(NSString *)function {
-    IndexAppContent *indexAppContent = [self.viewController getCommandInstance:@"IndexAppContent"];
 
-        if (indexAppContent.initDone && indexAppContent.ready) {
-            [self sendCommand:function webViewEngine:indexAppContent.webViewEngine];
-        } else {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, kCALL_DELAY_MILLISECONDS * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
-                [self callJavascriptFunctionWhenAvailable:function];
-            });
-        }
+    __weak __typeof(self) weakSelf = self;
+    __block NSString *command = function;
+
+    __block void (^checkAndExecute)( ) = ^void( ) {
+        NSString *check = @"(window && window.plugins && window.plugins.indexAppContent && typeof window.plugins.indexAppContent.onItemPressed == 'function') ? true : false";
+        IndexAppContent *indexAppContent = [weakSelf.viewController getCommandInstance:@"IndexAppContent"];
+        [weakSelf sendCommand:check webViewEngine:indexAppContent.webViewEngine completionHandler:^(id returnValue, NSError * error) {
+            if (error || [returnValue boolValue] == NO) {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, kCALL_DELAY_MILLISECONDS * NSEC_PER_MSEC), dispatch_get_main_queue(), checkAndExecute);
+            } else if ([returnValue boolValue] == YES) {
+                [self sendCommand:command webViewEngine:indexAppContent.webViewEngine completionHandler:nil];
+            }
+        }];
+    };
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_MSEC), dispatch_get_main_queue(), checkAndExecute);
 }
 
-- (void)sendCommand:(NSString *)command webViewEngine:(id<CDVWebViewEngineProtocol>)webViewEngine
+- (void)sendCommand:(NSString *)command webViewEngine:(id<CDVWebViewEngineProtocol>)webViewEngine completionHandler:(void (^)(id, NSError*))completionHandler
 {
-    [webViewEngine evaluateJavaScript:command completionHandler:nil];
+    [webViewEngine evaluateJavaScript:command completionHandler:completionHandler];
 }
 
 @end

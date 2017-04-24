@@ -5,9 +5,6 @@
 ## Usage
 Plugin should be installed on ``window.plugins.indexAppContent``.
 
-### Initialization (required)
-Calling ``window.plugins.indexAppContent.init()`` will explicitly tell the native component to initialize.
-
 ### Set items
 ``window.plugins.indexAppContent.setItems(items, success, error)`` expects at least one parameter, ``items``, which is an array of objects with the following structure:
 ```
@@ -53,7 +50,9 @@ window.plugins.indexAppContent.setItems(items, function() {
 
 Image data will be downloaded and stored in the background.
 
-### Set handler
+### On Item Pressed
+If user taps on a search result in spotlight then the app will be launched. You can register a Javascript handler to get informed when this happens.
+
 Assign a handler function to ``window.plugins.indexAppContent.onItemPressed`` that takes the payload as argument, like so:
 
 ```
@@ -61,10 +60,6 @@ window.plugins.indexAppContent.onItemPressed = function(payload) {
     console.log(payload.identifier); // Will print the identifier set on the object, see "Set items" above.
 }
 ```
-
-This handler will be called when launching the app by pressing an item in spotlight search results.
-
-NOTE: Set this handler before calling ``window.plugins.indexAppContent.init()``. A call to ``init()`` will tell the native code that the handler is ready to be used when the app is launched by tapping on a search result.
 
 ### Clear items
 Call ``window.plugins.indexAppContent.clearItemsForDomains(domains, success, error)`` to clear all items stored for a given array of domains.

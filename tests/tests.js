@@ -40,10 +40,25 @@ exports.defineManualTests = function (contentEl, createActionButton) {
         lifetime: 1440 // Lifetime in minutes (optional)
       }
       window.plugins.indexAppContent.setItems([oItem], function() {
-        console.log("success")
+        console.log("Item with identifier 88asdf7dsf created");
       }, function(error) {
         console.log("error: " + error);
       })
+    });
+
+    createActionButton('Set OnItemPressed handler', function () {
+
+      window.plugins.indexAppContent.onItemPressed = function(oItem) {
+        console.log("Item with identifier " + oItem.identifier + " was invoked from spotlight search");
+      }
+      console.log("Javascript handler set");
+      console.log("If you click on spotligh item (use manual test to create one first) then info gets logged by JS handler");
+    });
+
+    createActionButton('Clear OnItemPressed handler', function () {
+      window.plugins.indexAppContent.onItemPressed = {};
+      console.log("Javascript handler cleared'");
+      console.log("Clicking on spotlight item will still launch the app. As soon as handler gets set then handler will be called");
     });
 
 };

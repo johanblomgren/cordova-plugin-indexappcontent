@@ -22,9 +22,15 @@
         NSString *params = [NSString stringWithFormat:@"{'identifier':'%@'}", identifier];
         NSString *result = [NSString stringWithFormat:@"%@(%@)", jsFunction, params];
         [self callJavascriptFunctionWhenAvailable:result];
+        return YES;
+    } else {
+        // non spotlight related user activities might be handled by other plugins so check if other implementations exist and invoke them
+        if ([[self superclass] instancesRespondToSelector:NSSelectorFromString(@"application:continueUserActivity:restorationHandler:")]) {
+            return [super application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
+        } else {
+            return NO;
+        }
     }
-
-    return YES;
 }
 
 - (void)callJavascriptFunctionWhenAvailable:(NSString *)function {

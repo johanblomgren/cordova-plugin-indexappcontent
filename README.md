@@ -101,3 +101,17 @@ window.plugins.indexAppContent.setIndexingInterval(60, function() {
         // Handle error
     });
 ```
+
+## Tests
+
+The plugin is covered by automatic and manual tests implemented in Jasmine and following the [Cordova test framework](https://github.com/apache/cordova-plugin-test-framework) approach.
+
+You can create a test application and install the tests by doing the following steps:
+
+```
+cordova create indexAppContentTestApp --template cordova-template-test-framework
+cd indexAppContentTestApp
+cordova platform add ios
+cordova plugin add https://github.com/johanblomgren/cordova-plugin-indexappcontent
+cordova plugin add https://github.com/johanblomgren/cordova-plugin-indexappcontent/tests
+```

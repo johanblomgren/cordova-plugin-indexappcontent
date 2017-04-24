@@ -2,8 +2,8 @@ var exec = require("cordova/exec");
 
 var IndexAppContent = function () {};
 
-IndexAppContent.prototype.init = function (onSuccess, onError) {
-	exec(null, null, "IndexAppContent", "deviceIsReady", []);
+IndexAppContent.prototype.init = function () {
+	// TODO remove function in future release; leave it for now to ensure compatibility with older versions
 };
 
 IndexAppContent.prototype.setItems = function (items, onSuccess, onError) {

@@ -17,21 +17,21 @@
     if ([userActivity.activityType isEqualToString:CSSearchableItemActionType]) {
         // Get the item identifier and use it
         NSString *identifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
-        
+
         NSString *jsFunction = @"window.plugins.indexAppContent.onItemPressed";
         NSString *params = [NSString stringWithFormat:@"{'identifier':'%@'}", identifier];
         NSString *result = [NSString stringWithFormat:@"%@(%@)", jsFunction, params];
         [self callJavascriptFunctionWhenAvailable:result];
     }
-    
+
     return YES;
 }
 
 - (void)callJavascriptFunctionWhenAvailable:(NSString *)function {
     IndexAppContent *indexAppContent = [self.viewController getCommandInstance:@"IndexAppContent"];
-    
+
         if (indexAppContent.initDone && indexAppContent.ready) {
-            [self sendCommand:function webView:indexAppContent.webView];
+            [self sendCommand:function webViewEngine:indexAppContent.webViewEngine];
         } else {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, kCALL_DELAY_MILLISECONDS * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
                 [self callJavascriptFunctionWhenAvailable:function];
@@ -39,9 +39,9 @@
         }
 }
 
-- (void)sendCommand:(NSString *)command webView:(UIWebView *)webView
+- (void)sendCommand:(NSString *)command webViewEngine:(id<CDVWebViewEngineProtocol>)webViewEngine
 {
-    [webView stringByEvaluatingJavaScriptFromString:command];
+    [webViewEngine evaluateJavaScript:command completionHandler:nil];
 }
 
 @end

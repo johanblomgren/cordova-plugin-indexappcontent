@@ -81,7 +81,7 @@
                 NSLog(@"%@", error);
                 [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR] callbackId:command.callbackId];
             } else {
-                NSLog(@"Indexing complete. Next indexing at %@", [self _getTimestamp]);
+                NSLog(@"Indexing complete. Next indexing possible in %zd", [self _getIndexingInterval]);
                 [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
             }
         }];
@@ -135,11 +135,13 @@
 
 - (BOOL)_shouldUpdateIndex
 {
-    NSDate *updatedAt = [self _getTimestamp];
+    NSDate *indexLastUpdatedAt = [self _getTimestamp];
+    NSInteger timeIntervalInMinutesUntilNextUpdateIsProhibited = [self _getIndexingInterval];
+    int minutesSinceLastIndexUpdate = [self _getMinutesSince:indexLastUpdatedAt];
     BOOL shouldUpdate = YES;
 
-    if (updatedAt && [updatedAt compare:[NSDate date]] == NSOrderedDescending) {
-        NSLog(@"Will not update index. Last update: %@", updatedAt);
+    if (indexLastUpdatedAt && minutesSinceLastIndexUpdate < timeIntervalInMinutesUntilNextUpdateIsProhibited) {
+        NSLog(@"Will not update index. Last update: %@", indexLastUpdatedAt);
         shouldUpdate = NO;
     } else {
         [self _setTimestamp];
@@ -150,10 +152,12 @@
 
 - (void)_setTimestamp
 {
-    NSDate *nextDate = [self _dateByMinuteOffset:[self _getIndexingInterval]];
-
-    [[NSUserDefaults standardUserDefaults] setObject:nextDate forKey:kINDEX_TIMESTAMP_KEY];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:kINDEX_TIMESTAMP_KEY];
     [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (int)_getMinutesSince:(NSDate*)date {
+    return [[NSDate date] timeIntervalSinceDate:date] / 60;
 }
 
 - (NSDate *)_dateByMinuteOffset:(NSInteger)minuteOffset
@@ -176,14 +180,16 @@
 
 - (NSInteger)_getIndexingInterval
 {
-    NSInteger interval = [[[NSUserDefaults standardUserDefaults] objectForKey:kINDEXING_INTERVAL_KEY] integerValue];
-
-    return interval ? interval : kDEFAULT_INDEXING_INTERVAL;
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:kINDEXING_INTERVAL_KEY]) { // nil
+        return kDEFAULT_INDEXING_INTERVAL;
+    } else { // 0 or greater
+        return [[[NSUserDefaults standardUserDefaults] objectForKey:kINDEXING_INTERVAL_KEY] integerValue];
+    }
 }
 
 - (BOOL)_setIndexingInterval:(NSInteger)interval
 {
-    if (!interval) {
+    if (interval < 0) {
         return NO;
     }
 

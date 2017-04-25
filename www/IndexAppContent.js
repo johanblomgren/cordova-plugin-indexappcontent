@@ -32,7 +32,7 @@ IndexAppContent.prototype.clearItemsForIdentifiers = function (identifiers, onSu
 	if (!onError) {
 		onError = function() {};
 	}
-	if (!identifiers || !Array.isArray(identifiers) || domains.length==0) {
+	if (!identifiers || !Array.isArray(identifiers) || identifiers.length==0) {
 		onError(new Error("No identifiers"));
 		return;
 	}

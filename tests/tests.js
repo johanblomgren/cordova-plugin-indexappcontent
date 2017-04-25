@@ -25,6 +25,87 @@ exports.defineAutoTests = function () {
             expect(typeof window.plugins.indexAppContent.setIndexingInterval == 'function').toBe(true);
         });
     });
+
+    describe('setItems', function () {
+
+      it("shall not harm when calling without any parameters", function () {
+          window.plugins.indexAppContent.setItems();
+          expect("noJsError").toBeTruthy();
+      });
+
+        it("shall invoke error callback in case of no input", function (done) {
+            window.plugins.indexAppContent.setItems(undefined, function(){
+              done.fail();
+            }, function(error) {
+              expect(error.message).toBe("No items");
+              done();
+            });
+
+        });
+
+        it("shall invoke error callback in case of incorrect input", function (done) {
+            window.plugins.indexAppContent.setItems("No Array with Item", function(){
+              done.fail();
+            }, function(error) {
+              expect(error.message).toBe("No items");
+              done();
+            });
+        });
+    });
+
+    describe('clearItemsForDomains', function () {
+
+      it("shall not harm when calling without any parameters", function () {
+          window.plugins.indexAppContent.clearItemsForDomains();
+          expect("noJsError").toBeTruthy();
+      });
+
+        it("shall invoke error callback in case of no input", function (done) {
+            window.plugins.indexAppContent.clearItemsForDomains(undefined, function(){
+              done.fail();
+            }, function(error) {
+              expect(error.message).toBe("No domains");
+              done();
+            });
+
+        });
+
+        it("shall invoke error callback in case of incorrect input", function (done) {
+            window.plugins.indexAppContent.clearItemsForDomains("No Array with domains", function(){
+              done.fail();
+            }, function(error) {
+              expect(error.message).toBe("No domains");
+              done();
+            });
+        });
+    });
+
+    describe('clearItemsForIdentifiers', function () {
+
+      it("shall not harm when calling without any parameters", function () {
+          window.plugins.indexAppContent.clearItemsForIdentifiers();
+          expect("noJsError").toBeTruthy();
+      });
+
+        it("shall invoke error callback in case of no input", function (done) {
+            window.plugins.indexAppContent.clearItemsForIdentifiers(undefined, function(){
+              done.fail();
+            }, function(error) {
+              expect(error.message).toBe("No identifiers");
+              done();
+            });
+
+        });
+
+        it("shall invoke error callback in case of incorrect input", function (done) {
+            window.plugins.indexAppContent.clearItemsForIdentifiers("No Array with identifiers", function(){
+              done.fail();
+            }, function(error) {
+              expect(error.message).toBe("No identifiers");
+              done();
+            });
+        });
+    });
 };
 
 exports.defineManualTests = function (contentEl, createActionButton) {

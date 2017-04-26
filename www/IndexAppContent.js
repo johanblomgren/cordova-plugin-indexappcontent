@@ -10,52 +10,52 @@ IndexAppContent.prototype.isIndexingAvailable = function (fnCallback) {
 	exec(fnCallback, undefined, "IndexAppContent", "isIndexingAvailable", []);
 };
 
-IndexAppContent.prototype.setItems = function (items, onSuccess, onError) {
+IndexAppContent.prototype.setItems = function (aItems, onSuccess, onError) {
 	if (!onError) {
 		onError = function() {};
 	}
-	if (!items || !Array.isArray(items)|| items.length===0) {
-		onError(new Error("No items"));
+	if (!aItems || !Array.isArray(aItems)|| aItems.length===0) {
+		onError("No items");
 		return;
 	}
-	exec(onSuccess, onError, "IndexAppContent", "setItems", [items]);
+	exec(onSuccess, onError, "IndexAppContent", "setItems", [aItems]);
 };
 
-IndexAppContent.prototype.clearItemsForDomains = function (domains, onSuccess, onError) {
+IndexAppContent.prototype.clearItemsForDomains = function (aDomains, onSuccess, onError) {
 	if (!onError) {
 		onError = function() {};
 	}
-	if (!domains || !Array.isArray(domains) || domains.length===0) {
-		onError(new Error("No domains"));
+	if (!aDomains || !Array.isArray(aDomains) || aDomains.length===0) {
+		onError("No domains");
 		return;
 	}
-	exec(onSuccess, onError, "IndexAppContent", "clearItemsForDomains", [domains]);
+	exec(onSuccess, onError, "IndexAppContent", "clearItemsForDomains", [aDomains]);
 };
 
-IndexAppContent.prototype.clearItemsForIdentifiers = function (identifiers, onSuccess, onError) {
+IndexAppContent.prototype.clearItemsForIdentifiers = function (aIdentifiers, onSuccess, onError) {
 	if (!onError) {
 		onError = function() {};
 	}
-	if (!identifiers || !Array.isArray(identifiers) || identifiers.length===0) {
-		onError(new Error("No identifiers"));
+	if (!aIdentifiers || !Array.isArray(aIdentifiers) || aIdentifiers.length===0) {
+		onError("No identifiers");
 		return;
 	}
-	exec(onSuccess, onError, "IndexAppContent", "clearItemsForIdentifiers", [identifiers]);
+	exec(onSuccess, onError, "IndexAppContent", "clearItemsForIdentifiers", [aIdentifiers]);
 };
 
-IndexAppContent.prototype.setIndexingInterval = function (interval, onSuccess, onError) {
+IndexAppContent.prototype.setIndexingInterval = function (iMinutes, onSuccess, onError) {
 	if (!onError) {
 		onError = function() {};
 	}
-	if (!Number.isInteger(interval)) {
-		onError(new Error("Not a number"));
+	if (!Number.isInteger(iMinutes)) {
+		onError("Not a number");
 		return;
 	}
-	if (interval < 0) {
-		onError(new Error("Interval must => 0"));
+	if (iMinutes < 0) {
+		onError("Interval must => 0");
 		return;
 	}
-	exec(onSuccess, onError, "IndexAppContent", "setIndexingInterval", [interval]);
+	exec(onSuccess, onError, "IndexAppContent", "setIndexingInterval", [iMinutes]);
 };
 
 if (!window.plugins) {

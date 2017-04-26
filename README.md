@@ -3,16 +3,16 @@
 |[![Build Status](https://travis-ci.org/johanblomgren/cordova-plugin-indexappcontent.svg?branch=master)](https://travis-ci.org/johanblomgren/cordova-plugin-indexappcontent)|
 
 ## Overview
-This Cordova Plugin gives you a Javascript API to interact with [Core Spotlight](https://developer.apple.com/reference/corespotlight) on iOS (=> iOS 9). You can add, update and delete items to the spotlight search index. [Spotlight](https://en.wikipedia.org/wiki/Spotlight_(software) Search will include these items in the result list. You can deep-link the search results with your app.
+This Cordova Plugin gives you a Javascript API to interact with [Core Spotlight](https://developer.apple.com/reference/corespotlight) on iOS (=> iOS 9). You can add, update and delete items to the spotlight search index. [Spotlight](https://en.wikipedia.org/wiki/Spotlight_(software)) Search will include these items in the result list. You can deep-link the search results with your app.
 
 ## Installation
  Install using ``cordova`` CLI.
  * Run ``cordova plugin add https://github.com/johanblomgren/cordova-plugin-indexappcontent.git``
 
 ## Usage
-Plugin should be installed on ``window.plugins.indexAppContent``.
+This plugin defines a global `window.plugins.indexAppContent` object.
 
-### is Indexing Available
+### Is Indexing Available
 The option to index app content might be not available at all due to device limitations or user settings. Therefore it's highly recommended to check upfront if indexing is possible.
 
 ``window.plugins.indexAppContent.isIndexingAvailable(fnCallback)`` will invoke the callback with a boolean value to indicate if indexing is possible or not.
@@ -27,7 +27,7 @@ window.plugins.indexAppContent.isIndexingAvailable(function(bIsAvailable){
 Please note that the function does not consider possible time restrictions imposed by ``setIndexingInterval``.
 
 ### Set items
-``window.plugins.indexAppContent.setItems(items, success, error)`` expects at least one parameter, ``items``, which is an array of objects with the following structure:
+Call ``window.plugins.indexAppContent.setItems(aItems, success, error)`` to add or change items to the spotlight index. Function expects at least one parameter, ``aItems``, which is an array of objects with the following structure:
 ```
 {
     domain: 'com.my.domain',
@@ -45,7 +45,7 @@ Please note that the function does not consider possible time restrictions impos
 Example:
 
 ```
-var items = [
+var aItems = [
     {
         domain: 'com.my.domain',
         identifier: '88asdf7dsf',
@@ -62,11 +62,11 @@ var items = [
     }
 ];
 
-window.plugins.indexAppContent.setItems(items, function() {
-        console.log('Successfully set items');
-    }, function(error) {
-        // Handle error
-    });
+window.plugins.indexAppContent.setItems(aItems, function() {
+    console.log('Successfully set items');
+}, function(sError) {
+    console.log("Error when trying to add/modify index: " + sError);
+});
 ```
 
 Image data will be downloaded and stored in the background.
@@ -83,45 +83,46 @@ window.plugins.indexAppContent.onItemPressed = function(payload) {
 ```
 
 ### Clear items
-Call ``window.plugins.indexAppContent.clearItemsForDomains(domains, success, error)`` to clear all items stored for a given array of domains.
+Call ``window.plugins.indexAppContent.clearItemsForDomains(aDomains, fnSuccess, fnError)`` to clear all items stored for a given array of domains.
 
 Example:
 
 ```
 window.plugins.indexAppContent.clearItemsForDomains(['com.my.domain', 'com.my.other.domain'], function() {
     console.log('Items removed');
-    }, function(error) {
-        // Handle error
-    });
-
+}, function(sError) {
+    console.log("Error when trying to clear items: " + sError);
+});
 ```
 
-Call ``window.plugins.indexAppContent.clearItemsForIdentifiers(identifiers, success, error)`` to clear all items stored for a given array of identifiers.
+Call ``window.plugins.indexAppContent.clearItemsForIdentifiers(aIdentifiers, fnSuccess, fnError)`` to clear all items stored for a given array of identifiers.
 
 Example:
 
 ```
 window.plugins.indexAppContent.clearItemsForIdentifiers(['id1', 'id2'], function() {
     console.log('Items removed');
-    }, function(error) {
-        // Handle error
-    });
+}, function(sError) {
+    console.log("Error when trying to clear items: " + sError);
+});
 
 ```
 
 ### Set indexing interval
 
-Call ``window.plugins.indexAppContent.setIndexingInterval(interval, success, error)`` to configure the interval (in minutes) for how often indexing should be allowed. First parameter must be numeric and => 0.
+Call ``window.plugins.indexAppContent.setIndexingInterval(iIntervalInMinutes, fnSuccess, fnError)`` to configure a time interval (in minutes) until which indexing operations are not allowed. First parameter must be numeric and => 0.
 
 Example:
 
 ```
 window.plugins.indexAppContent.setIndexingInterval(60, function() {
-        // Console.log('Successfully set interval');
-    }, function(error) {
-        // Handle error
-    });
+    console.log('Successfully set interval');
+}, function(sError) {
+    console.log("Error when trying to set time interval: " + sError);
+});
 ```
+
+Without calling this function a subsequent call to manipulate the index is only possible after 1440 minutes (= 24 hours) !
 
 ## Tests
 
@@ -136,3 +137,5 @@ cordova platform add ios
 cordova plugin add https://github.com/johanblomgren/cordova-plugin-indexappcontent
 cordova plugin add https://github.com/johanblomgren/cordova-plugin-indexappcontent/tests
 ```
+
+As an alternative you can use [Cordova Paramedic](https://github.com/apache/cordova-paramedic) to run them

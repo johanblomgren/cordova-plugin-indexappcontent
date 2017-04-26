@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-indexappcontent",
-  "version": "0.1.0",
+  "version": "0.5.0",
   "description": "Enable on-device searchable app content indexing.",
   "cordova": {
     "id": "cordova-plugin-indexappcontent",

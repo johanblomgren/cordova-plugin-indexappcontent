@@ -42,8 +42,8 @@ exports.defineAutoTests = function() {
         it("shall invoke error callback in case of no input", function(done) {
             window.plugins.indexAppContent.setItems(undefined, function() {
                 done.fail();
-            }, function(error) {
-                expect(error.message).toBe("No items");
+            }, function(sError) {
+                expect(sError).toBe("No items");
                 done();
             });
 
@@ -52,8 +52,8 @@ exports.defineAutoTests = function() {
         it("shall invoke error callback in case of incorrect input", function(done) {
             window.plugins.indexAppContent.setItems("No Array with Item", function() {
                 done.fail();
-            }, function(error) {
-                expect(error.message).toBe("No items");
+            }, function(sError) {
+                expect(sError).toBe("No items");
                 done();
             });
         });
@@ -69,8 +69,8 @@ exports.defineAutoTests = function() {
         it("shall invoke error callback in case of no input", function(done) {
             window.plugins.indexAppContent.clearItemsForDomains(undefined, function() {
                 done.fail();
-            }, function(error) {
-                expect(error.message).toBe("No domains");
+            }, function(sError) {
+                expect(sError).toBe("No domains");
                 done();
             });
 
@@ -79,8 +79,8 @@ exports.defineAutoTests = function() {
         it("shall invoke error callback in case of incorrect input", function(done) {
             window.plugins.indexAppContent.clearItemsForDomains("No Array with domains", function() {
                 done.fail();
-            }, function(error) {
-                expect(error.message).toBe("No domains");
+            }, function(sError) {
+                expect(sError).toBe("No domains");
                 done();
             });
         });
@@ -96,8 +96,8 @@ exports.defineAutoTests = function() {
         it("shall invoke error callback in case of no input", function(done) {
             window.plugins.indexAppContent.clearItemsForIdentifiers(undefined, function() {
                 done.fail();
-            }, function(error) {
-                expect(error.message).toBe("No identifiers");
+            }, function(sError) {
+                expect(sError).toBe("No identifiers");
                 done();
             });
 
@@ -106,8 +106,8 @@ exports.defineAutoTests = function() {
         it("shall invoke error callback in case of incorrect input", function(done) {
             window.plugins.indexAppContent.clearItemsForIdentifiers("No Array with identifiers", function() {
                 done.fail();
-            }, function(error) {
-                expect(error.message).toBe("No identifiers");
+            }, function(sError) {
+                expect(sError).toBe("No identifiers");
                 done();
             });
         });
@@ -123,8 +123,8 @@ exports.defineAutoTests = function() {
         it("shall invoke error callback in case of values < 0", function(done) {
             window.plugins.indexAppContent.setIndexingInterval(-1, function() {
                 done.fail();
-            }, function(oError) {
-                expect(oError).toBeDefined();
+            }, function(sError) {
+                expect(sError).toBeDefined();
                 done();
             });
         });
@@ -169,7 +169,7 @@ exports.defineAutoTests = function() {
                     }, function() {
                         done.fail();
                     });
-                }, function(error) {
+                }, function(sError) {
                     done.fail();
                 });
             };
@@ -180,7 +180,7 @@ exports.defineAutoTests = function() {
                 }, function() {
                     fnCreateAndDelete();
                 });
-            }, function(error) {
+            }, function(sError) {
                 done.fail();
             });
         });
@@ -207,8 +207,8 @@ exports.defineManualTests = function(contentEl, createActionButton) {
         };
         window.plugins.indexAppContent.setItems([oItem], function() {
             console.log("Item with identifier 88asdf7dsf created");
-        }, function(error) {
-            console.log("error: " + error);
+        }, function(sError) {
+            console.log("error: " + sError);
         });
     });
 

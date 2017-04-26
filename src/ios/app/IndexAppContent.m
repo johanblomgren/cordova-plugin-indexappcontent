@@ -26,6 +26,12 @@
 
 @implementation IndexAppContent
 
+#pragma mark - Public (Overriden)
+
+- (void)onAppTerminate {
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 #pragma mark - Public
 
 - (void)setItems:(CDVInvokedUrlCommand *)command
@@ -153,7 +159,6 @@
 - (void)_setTimestamp
 {
     [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:kINDEX_TIMESTAMP_KEY];
-    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (int)_getMinutesSince:(NSDate*)date {
@@ -194,7 +199,6 @@
     }
 
     [[NSUserDefaults standardUserDefaults] setObject:@(interval) forKey:kINDEXING_INTERVAL_KEY];
-    [[NSUserDefaults standardUserDefaults] synchronize];
 
     return YES;
 }

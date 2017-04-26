@@ -118,8 +118,8 @@ exports.defineAutoTests = function() {
         it("shall invoke error callback in case of values < 0", function(done) {
             window.plugins.indexAppContent.setIndexingInterval(-1, function() {
                 done.fail();
-            }, function(error) {
-                expect(error).toBeDefined();
+            }, function(oError) {
+                expect(oError).toBeDefined();
                 done();
             });
         });
@@ -128,7 +128,7 @@ exports.defineAutoTests = function() {
             window.plugins.indexAppContent.setIndexingInterval(0, function() {
                 expect("success").toBeTruthy();
                 done();
-            }, function(error) {
+            }, function() {
                 done.fail();
             });
         });
@@ -137,7 +137,7 @@ exports.defineAutoTests = function() {
             window.plugins.indexAppContent.setIndexingInterval(77, function() {
                 expect("success").toBeTruthy();
                 done();
-            }, function(error) {
+            }, function() {
                 done.fail();
             });
         });

@@ -90,7 +90,7 @@ window.plugins.indexAppContent.clearItemsForIdentifiers(['id1', 'id2'], function
 
 ### Set indexing interval
 
-Call ``window.plugins.indexAppContent.setIndexingInterval(interval, success, error)`` to configure the interval (in minutes) for how often indexing should be allowed.
+Call ``window.plugins.indexAppContent.setIndexingInterval(interval, success, error)`` to configure the interval (in minutes) for how often indexing should be allowed. First parameter must be numeric and => 0.
 
 Example:
 

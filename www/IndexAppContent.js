@@ -40,6 +40,17 @@ IndexAppContent.prototype.clearItemsForIdentifiers = function (identifiers, onSu
 };
 
 IndexAppContent.prototype.setIndexingInterval = function (interval, onSuccess, onError) {
+	if (!onError) {
+		onError = function() {};
+	}
+	if (!Number.isInteger(interval)) {
+		onError(new Error("Not a number"));
+		return;
+	}
+	if (interval < 0) {
+		onError(new Error("Interval must => 0"));
+		return;
+	}
 	exec(onSuccess, onError, "IndexAppContent", "setIndexingInterval", [interval]);
 };
 

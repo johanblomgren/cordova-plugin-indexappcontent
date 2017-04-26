@@ -18,12 +18,12 @@
     <engine name="cordova" version=">=3.5.0"/>
   </engines>
 
-  <js-module name="IndexAppContent" src="www/IndexAppContent.js">
-    <clobbers target="plugins.indexAppContent"/>
-  </js-module>
-
   <platform name="ios">
-    
+
+    <js-module name="IndexAppContent" src="www/IndexAppContent.js">
+      <clobbers target="plugins.indexAppContent"/>
+    </js-module>
+
     <config-file parent="/*" target="config.xml">
       <feature name="IndexAppContent">
         <param name="ios-package" value="IndexAppContent"/>
@@ -35,10 +35,10 @@
     <source-file src="src/ios/app/IndexAppContent.m"/>
     <header-file src="src/ios/app/AppDelegate+IndexAppContent.h"/>
     <source-file src="src/ios/app/AppDelegate+IndexAppContent.m"/>
-    
+
     <framework src="MobileCoreServices.framework" />
     <framework src="CoreSpotlight.framework" />
-    
+
   </platform>
 
 </plugin>

@@ -1,7 +1,9 @@
+|Travis CI|
+|:-:|
+|[![Build Status](https://travis-ci.org/johanblomgren/cordova-plugin-indexappcontent.svg?branch=master)](https://travis-ci.org/johanblomgren/cordova-plugin-indexappcontent)|
+
 ## Overview
 This Cordova Plugin gives you a Javascript API to interact with [Core Spotlight](https://developer.apple.com/reference/corespotlight) on iOS (=> iOS 9). You can add, update and delete items to the spotlight search index. [Spotlight](https://en.wikipedia.org/wiki/Spotlight_(software) Search will include these items in the result list. You can deep-link the search results with your app.
-
-
 
 ## Installation
  Install using ``cordova`` CLI.

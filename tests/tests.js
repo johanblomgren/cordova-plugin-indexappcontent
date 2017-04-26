@@ -1,3 +1,4 @@
+/* jshint jasmine: true */
 exports.defineAutoTests = function() {
 
     describe('Plugin', function() {
@@ -155,18 +156,18 @@ exports.defineAutoTests = function() {
                     url: 'http://location/of/my/image.jpg',
                     keywords: ['This', 'is', 'optional'], // Item keywords (optional)
                     lifetime: 1440 // Lifetime in minutes (optional)
-                }
+                };
                 window.plugins.indexAppContent.setItems([oItem], function() {
                     window.plugins.indexAppContent.clearItemsForDomains(['com.my.domain'], function() {
                         expect("everythingSeemsToWork").toBeTruthy();
                         done();
                     }, function() {
                         done.fail();
-                    })
+                    });
                 }, function(error) {
                     done.fail();
-                })
-            }
+                });
+            };
 
             window.plugins.indexAppContent.setIndexingInterval(0, function() {
                 window.plugins.indexAppContent.clearItemsForIdentifiers(['88asdf7dsf'], function() {
@@ -192,19 +193,19 @@ exports.defineManualTests = function(contentEl, createActionButton) {
             url: 'http://location/of/my/image.jpg',
             keywords: ['This', 'is', 'optional'], // Item keywords (optional)
             lifetime: 1440 // Lifetime in minutes (optional)
-        }
+        };
         window.plugins.indexAppContent.setItems([oItem], function() {
             console.log("Item with identifier 88asdf7dsf created");
         }, function(error) {
             console.log("error: " + error);
-        })
+        });
     });
 
     createActionButton('Set OnItemPressed handler', function() {
 
         window.plugins.indexAppContent.onItemPressed = function(oItem) {
             console.log("Item with identifier " + oItem.identifier + " was invoked from spotlight search");
-        }
+        };
         console.log("Javascript handler set");
         console.log("If you click on spotligh item (use manual test to create one first) then info gets logged by JS handler");
     });

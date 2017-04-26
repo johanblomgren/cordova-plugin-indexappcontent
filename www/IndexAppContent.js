@@ -10,7 +10,7 @@ IndexAppContent.prototype.setItems = function (items, onSuccess, onError) {
 	if (!onError) {
 		onError = function() {};
 	}
-	if (!items || !Array.isArray(items)|| items.length==0) {
+	if (!items || !Array.isArray(items)|| items.length===0) {
 		onError(new Error("No items"));
 		return;
 	}
@@ -21,7 +21,7 @@ IndexAppContent.prototype.clearItemsForDomains = function (domains, onSuccess, o
 	if (!onError) {
 		onError = function() {};
 	}
-	if (!domains || !Array.isArray(domains) || domains.length==0) {
+	if (!domains || !Array.isArray(domains) || domains.length===0) {
 		onError(new Error("No domains"));
 		return;
 	}
@@ -32,7 +32,7 @@ IndexAppContent.prototype.clearItemsForIdentifiers = function (identifiers, onSu
 	if (!onError) {
 		onError = function() {};
 	}
-	if (!identifiers || !Array.isArray(identifiers) || identifiers.length==0) {
+	if (!identifiers || !Array.isArray(identifiers) || identifiers.length===0) {
 		onError(new Error("No identifiers"));
 		return;
 	}

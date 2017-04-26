@@ -25,9 +25,16 @@
       "version": ">=3.5.0"
     }
   ],
+  "scripts": {
+      "test": "npm run jshint",
+      "jshint": "node node_modules/jshint/bin/jshint www && node node_modules/jshint/bin/jshint src && node node_modules/jshint/bin/jshint tests"
+    },
   "author": "Johan Blomgren <j.blomgr@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/johanblomgren/cordova-plugin-indexappcontent/issues"
+  },
+  "devDependencies": {
+    "jshint": "^2.6.0"
   }
 }

@@ -6,6 +6,11 @@ exports.defineAutoTests = function() {
             expect(window.plugins.indexAppContent).toBeDefined();
         });
 
+        it("should offer a isIndexingAvailable function", function() {
+            expect(window.plugins.indexAppContent.isIndexingAvailable).toBeDefined();
+            expect(typeof window.plugins.indexAppContent.isIndexingAvailable == 'function').toBe(true);
+        });
+
         it("should offer a setItems function", function() {
             expect(window.plugins.indexAppContent.setItems).toBeDefined();
             expect(typeof window.plugins.indexAppContent.setItems == 'function').toBe(true);
@@ -183,6 +188,12 @@ exports.defineAutoTests = function() {
 };
 
 exports.defineManualTests = function(contentEl, createActionButton) {
+
+    createActionButton('Is Index Available?', function() {
+        window.plugins.indexAppContent.isIndexingAvailable(function(bIsAvailable) {
+            console.log('Indexing available: ' + bIsAvailable);
+        });
+    });
 
     createActionButton('Add item', function() {
         var oItem = {

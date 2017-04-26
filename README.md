@@ -1,9 +1,28 @@
+## Overview
+This Cordova Plugin gives you a Javascript API to interact with [Core Spotlight](https://developer.apple.com/reference/corespotlight) on iOS (=> iOS 9). You can add, update and delete items to the spotlight search index. [Spotlight](https://en.wikipedia.org/wiki/Spotlight_(software) Search will include these items in the result list. You can deep-link the search results with your app.
+
+
+
 ## Installation
  Install using ``cordova`` CLI.
  * Run ``cordova plugin add https://github.com/johanblomgren/cordova-plugin-indexappcontent.git``
 
 ## Usage
 Plugin should be installed on ``window.plugins.indexAppContent``.
+
+### is Indexing Available
+The option to index app content might be not available at all due to device limitations or user settings. Therefore it's highly recommended to check upfront if indexing is possible.
+
+``window.plugins.indexAppContent.isIndexingAvailable(fnCallback)`` will invoke the callback with a boolean value to indicate if indexing is possible or not.
+```
+window.plugins.indexAppContent.isIndexingAvailable(function(bIsAvailable){
+    if (bIsAvailable === true) {
+      // let's go ahead and index your content
+    }
+})
+```
+
+Please note that the function does not consider possible time restrictions imposed by ``setIndexingInterval``.
 
 ### Set items
 ``window.plugins.indexAppContent.setItems(items, success, error)`` expects at least one parameter, ``items``, which is an array of objects with the following structure:

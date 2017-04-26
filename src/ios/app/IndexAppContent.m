@@ -34,6 +34,11 @@
 
 #pragma mark - Public
 
+- (void)isIndexingAvailable:(CDVInvokedUrlCommand *)command
+{
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[CSSearchableIndex isIndexingAvailable]] callbackId:command.callbackId];
+}
+
 - (void)setItems:(CDVInvokedUrlCommand *)command
 {
 

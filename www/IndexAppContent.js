@@ -6,6 +6,10 @@ IndexAppContent.prototype.init = function () {
 	// TODO remove function in future release; leave it for now to ensure compatibility with older versions
 };
 
+IndexAppContent.prototype.isIndexingAvailable = function (fnCallback) {
+	exec(fnCallback, undefined, "IndexAppContent", "isIndexingAvailable", []);
+};
+
 IndexAppContent.prototype.setItems = function (items, onSuccess, onError) {
 	if (!onError) {
 		onError = function() {};

@@ -7,7 +7,7 @@
 
 #import "AppDelegate+IndexAppContent.h"
 #import "IndexAppContent.h"
-#import <objc/objc-runtime.h>
+#import <objc/runtime.h>
 
 #define kCALL_DELAY_MILLISECONDS 25
 

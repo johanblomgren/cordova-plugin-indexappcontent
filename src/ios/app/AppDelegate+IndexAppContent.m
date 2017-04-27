@@ -7,29 +7,74 @@
 
 #import "AppDelegate+IndexAppContent.h"
 #import "IndexAppContent.h"
+#import <objc/objc-runtime.h>
 
 #define kCALL_DELAY_MILLISECONDS 25
 
 @implementation AppDelegate (IndexAppContent)
 
-- (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity restorationHandler:(nonnull void (^)(NSArray * _Nullable))restorationHandler
+/*
+ handle the case that another category or class in the class hierachy of AppDelegate already implements the UIApplicationDelegate and handOff method "application:continueUserActivity:restorationHandler:"
+ Use method swizzling to archieve the following:
+ - call the original implementation (which handles other use cases like universal links)
+ - call our own implementation to handle CSSearchableItemActionType (if userActivity was not yet handled)
+ */
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+
+        SEL originalHandOffSEL, swizzledHandOffSEL, spotlightHandOffSEL;
+        Method originalHandOffMethod, swizzledHandOffMethod, spotlightHandOffMethod;
+
+        Class thisClass = [self class];
+
+        originalHandOffSEL = @selector(application:continueUserActivity:restorationHandler:);
+        swizzledHandOffSEL = @selector(swizzledHandOff:continueUserActivity:restorationHandler:);
+        spotlightHandOffSEL = @selector(indexAppContent_application:continueUserActivity:restorationHandler:);
+
+        BOOL originalHandOffExists = [self instancesRespondToSelector:originalHandOffSEL];
+
+        originalHandOffMethod = class_getInstanceMethod(thisClass, originalHandOffSEL);
+        swizzledHandOffMethod = class_getInstanceMethod(thisClass, swizzledHandOffSEL);
+        spotlightHandOffMethod = class_getInstanceMethod(thisClass, spotlightHandOffSEL);
+
+        BOOL didAddMethod = class_addMethod(thisClass, originalHandOffSEL, method_getImplementation(swizzledHandOffMethod), method_getTypeEncoding(swizzledHandOffMethod));
+
+        if (didAddMethod) {
+            if (!originalHandOffExists) {
+                class_replaceMethod(thisClass, swizzledHandOffSEL, method_getImplementation(spotlightHandOffMethod), method_getTypeEncoding(spotlightHandOffMethod));
+            } else {
+                class_replaceMethod(thisClass, swizzledHandOffSEL, method_getImplementation(originalHandOffMethod), method_getTypeEncoding(originalHandOffMethod));
+            }
+        } else {
+            method_exchangeImplementations(originalHandOffMethod, swizzledHandOffMethod);
+        }
+    });
+}
+
+- (BOOL)swizzledHandOff:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity restorationHandler:(nonnull void (^)(NSArray * _Nullable))restorationHandler {
+
+    BOOL orginalHandOffImplementedHandledCase = [self swizzledHandOff:application continueUserActivity:userActivity restorationHandler:restorationHandler];
+    if (orginalHandOffImplementedHandledCase == NO) {
+        return [self indexAppContent_application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
+    } else {
+      NSLog(@"Another implementation (e.g. plugin) already handled that userActivity");
+      return YES;
+    }
+}
+
+- (BOOL)indexAppContent_application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity restorationHandler:(nonnull void (^)(NSArray * _Nullable))restorationHandler
 {
     if ([userActivity.activityType isEqualToString:CSSearchableItemActionType]) {
-        // Get the item identifier and use it
         NSString *identifier = userActivity.userInfo[CSSearchableItemActivityIdentifier];
-
         NSString *jsFunction = @"window.plugins.indexAppContent.onItemPressed";
         NSString *params = [NSString stringWithFormat:@"{'identifier':'%@'}", identifier];
         NSString *result = [NSString stringWithFormat:@"%@(%@)", jsFunction, params];
         [self callJavascriptFunctionWhenAvailable:result];
         return YES;
     } else {
-        // non spotlight related user activities might be handled by other plugins so check if other implementations exist and invoke them
-        if ([[self superclass] instancesRespondToSelector:NSSelectorFromString(@"application:continueUserActivity:restorationHandler:")]) {
-            return [super application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
-        } else {
-            return NO;
-        }
+        NSLog(@"userActivity is not related to spotlight and therefore does not get handled");
+        return NO;
     }
 }
 

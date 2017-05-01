@@ -1,0 +1,12 @@
+language: objective-c
+node_js:
+  - "4.2"
+install:
+  - npm install -g cordova
+  - npm install -g ios-sim
+  - npm install -g ios-deploy
+  - npm install -g cordova-paramedic
+  - npm install
+script:
+  - npm test
+  - cordova-paramedic --platform ios --plugin /Users/travis/build/johanblomgren/cordova-plugin-indexappcontent

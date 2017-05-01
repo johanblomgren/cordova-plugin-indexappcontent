@@ -10,9 +10,6 @@
 #import "UIKit/UITouch.h"
 #import "IndexAppContent.h"
 
-NSString *kIndexAppContentDelayExecutionNotification = @"kIndexAppContentDelayExecutionNotification";
-NSString *kIndexAppContentExecutionDelayKey = @"kIndexAppContentExecutionDelayKey";
-
 @interface IndexAppContent () {
     dispatch_group_t _group;
     dispatch_queue_t _queue;
@@ -29,23 +26,17 @@ NSString *kIndexAppContentExecutionDelayKey = @"kIndexAppContentExecutionDelayKe
 
 @implementation IndexAppContent
 
+#pragma mark - Public (Overriden)
+
+- (void)onAppTerminate {
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 #pragma mark - Public
 
-- (void)deviceIsReady:(CDVInvokedUrlCommand *)command
+- (void)isIndexingAvailable:(CDVInvokedUrlCommand *)command
 {
-  self.initDone = YES;
-}
-
-- (void)pluginInitialize
-{
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleIndexAppContentDelayExecutionNotification:) name:kIndexAppContentDelayExecutionNotification object:nil];
-
-    self.ready = YES;
-}
-
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kIndexAppContentDelayExecutionNotification object:nil];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[CSSearchableIndex isIndexingAvailable]] callbackId:command.callbackId];
 }
 
 - (void)setItems:(CDVInvokedUrlCommand *)command
@@ -99,9 +90,9 @@ NSString *kIndexAppContentExecutionDelayKey = @"kIndexAppContentExecutionDelayKe
         [[CSSearchableIndex defaultSearchableIndex] indexSearchableItems:searchableItems completionHandler:^(NSError * _Nullable error) {
             if (error) {
                 NSLog(@"%@", error);
-                [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR] callbackId:command.callbackId];
+                [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]] callbackId:command.callbackId];
             } else {
-                NSLog(@"Indexing complete. Next indexing at %@", [self _getTimestamp]);
+                NSLog(@"Indexing complete. Next indexing possible in %zd", [self _getIndexingInterval]);
                 [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
             }
         }];
@@ -115,7 +106,7 @@ NSString *kIndexAppContentExecutionDelayKey = @"kIndexAppContentExecutionDelayKe
     [[CSSearchableIndex defaultSearchableIndex] deleteSearchableItemsWithDomainIdentifiers:domains completionHandler:^(NSError * _Nullable error) {
         if (error) {
             NSLog(@"%@", error);
-            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR] callbackId:command.callbackId];
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]] callbackId:command.callbackId];
         } else {
             NSLog(@"Index removed for domains %@", domains);
             [self _clearTimestamp];
@@ -131,7 +122,7 @@ NSString *kIndexAppContentExecutionDelayKey = @"kIndexAppContentExecutionDelayKe
     [[CSSearchableIndex defaultSearchableIndex] deleteSearchableItemsWithIdentifiers:identifiers completionHandler:^(NSError * _Nullable error) {
         if (error) {
             NSLog(@"%@", error);
-            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR] callbackId:command.callbackId];
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]] callbackId:command.callbackId];
         } else {
             NSLog(@"Items removed with identifiers %@", identifiers);
             [self _clearTimestamp];
@@ -147,33 +138,21 @@ NSString *kIndexAppContentExecutionDelayKey = @"kIndexAppContentExecutionDelayKe
     if ([self _setIndexingInterval:interval]) {
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
     } else {
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR] callbackId:command.callbackId];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid time interval"] callbackId:command.callbackId];
     }
-}
-
-#pragma mark - Notifications
-
-- (void)handleIndexAppContentDelayExecutionNotification:(NSNotification *)notification
-{
-    float delay = [notification.userInfo[kIndexAppContentExecutionDelayKey] floatValue];
-
-    self.ready = NO;
-
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC);
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        self.ready = YES;
-    });
 }
 
 #pragma mark - Private
 
 - (BOOL)_shouldUpdateIndex
 {
-    NSDate *updatedAt = [self _getTimestamp];
+    NSDate *indexLastUpdatedAt = [self _getTimestamp];
+    NSInteger timeIntervalInMinutesUntilNextUpdateIsProhibited = [self _getIndexingInterval];
+    int minutesSinceLastIndexUpdate = [self _getMinutesSince:indexLastUpdatedAt];
     BOOL shouldUpdate = YES;
 
-    if (updatedAt && [updatedAt compare:[NSDate date]] == NSOrderedDescending) {
-        NSLog(@"Will not update index. Last update: %@", updatedAt);
+    if (indexLastUpdatedAt && minutesSinceLastIndexUpdate < timeIntervalInMinutesUntilNextUpdateIsProhibited) {
+        NSLog(@"Will not update index. Last update: %@", indexLastUpdatedAt);
         shouldUpdate = NO;
     } else {
         [self _setTimestamp];
@@ -184,10 +163,11 @@ NSString *kIndexAppContentExecutionDelayKey = @"kIndexAppContentExecutionDelayKe
 
 - (void)_setTimestamp
 {
-    NSDate *nextDate = [self _dateByMinuteOffset:[self _getIndexingInterval]];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:kINDEX_TIMESTAMP_KEY];
+}
 
-    [[NSUserDefaults standardUserDefaults] setObject:nextDate forKey:kINDEX_TIMESTAMP_KEY];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+- (int)_getMinutesSince:(NSDate*)date {
+    return [[NSDate date] timeIntervalSinceDate:date] / 60;
 }
 
 - (NSDate *)_dateByMinuteOffset:(NSInteger)minuteOffset
@@ -210,19 +190,20 @@ NSString *kIndexAppContentExecutionDelayKey = @"kIndexAppContentExecutionDelayKe
 
 - (NSInteger)_getIndexingInterval
 {
-    NSInteger interval = [[[NSUserDefaults standardUserDefaults] objectForKey:kINDEXING_INTERVAL_KEY] integerValue];
-
-    return interval ? interval : kDEFAULT_INDEXING_INTERVAL;
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:kINDEXING_INTERVAL_KEY]) { // nil
+        return kDEFAULT_INDEXING_INTERVAL;
+    } else { // 0 or greater
+        return [[[NSUserDefaults standardUserDefaults] objectForKey:kINDEXING_INTERVAL_KEY] integerValue];
+    }
 }
 
 - (BOOL)_setIndexingInterval:(NSInteger)interval
 {
-    if (!interval) {
+    if (interval < 0) {
         return NO;
     }
 
     [[NSUserDefaults standardUserDefaults] setObject:@(interval) forKey:kINDEXING_INTERVAL_KEY];
-    [[NSUserDefaults standardUserDefaults] synchronize];
 
     return YES;
 }

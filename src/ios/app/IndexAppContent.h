@@ -9,15 +9,9 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <CoreSpotlight/CoreSpotlight.h>
 
-UIKIT_EXTERN NSString *kIndexAppContentDelayExecutionNotification;
-UIKIT_EXTERN NSString *kIndexAppContentExecutionDelayKey;
-
 @interface IndexAppContent : CDVPlugin
 
-@property BOOL initDone;
-@property BOOL ready;
-
-- (void)deviceIsReady:(CDVInvokedUrlCommand *)command;
+- (void)isIndexingAvailable:(CDVInvokedUrlCommand *)command;
 - (void)setItems:(CDVInvokedUrlCommand *)command;
 - (void)clearItemsForDomains:(CDVInvokedUrlCommand *)command;
 - (void)clearItemsForIdentifiers:(CDVInvokedUrlCommand *)command;

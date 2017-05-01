@@ -13,7 +13,7 @@ This Cordova Plugin gives you a Javascript API to interact with [Core Spotlight]
 This plugin defines a global `window.plugins.indexAppContent` object.
 
 ### Is Indexing Available
-The option to index app content might be not available at all due to device limitations or user settings. Therefore it's highly recommended to check upfront if indexing is possible.
+The option to index app content might not be available at all due to device limitations or user settings. Therefore it's highly recommended to check upfront if indexing is possible.
 
 ``window.plugins.indexAppContent.isIndexingAvailable(fnCallback)`` will invoke the callback with a boolean value to indicate if indexing is possible or not.
 ```
@@ -110,7 +110,7 @@ window.plugins.indexAppContent.clearItemsForIdentifiers(['id1', 'id2'], function
 
 ### Set indexing interval
 
-Call ``window.plugins.indexAppContent.setIndexingInterval(iIntervalInMinutes, fnSuccess, fnError)`` to configure a time interval (in minutes) until which indexing operations are not allowed. First parameter must be numeric and => 0.
+You might want to avoid to update spotlight index too frequently. Call ``window.plugins.indexAppContent.setIndexingInterval(iIntervalInMinutes, fnSuccess, fnError)`` to configure a time interval (in minutes) to define when indexing operations are allowed since your last spotlight index update. First parameter must be numeric and => 0.
 
 Example:
 
@@ -124,11 +124,16 @@ window.plugins.indexAppContent.setIndexingInterval(60, function() {
 
 Without calling this function a subsequent call to manipulate the index is only possible after 1440 minutes (= 24 hours) !
 
+Example:
+- You call ```setIndexingInterval``` and specify 5min. You call ```setItems``` for the first time and function will be executed successfully.
+- You call ```setItems``` again after 2min. Spotlight index will NOT be updated and error callback gets invoked.
+- You call ```setItems``` after 6 min and function will be executed successfully.
+
 ## Tests
 
 The plugin is covered by automatic and manual tests implemented in Jasmine and following the [Cordova test framework](https://github.com/apache/cordova-plugin-test-framework) approach.
 
-You can create a test application and install the tests by doing the following steps:
+You can create a test application with the tests by doing the following steps:
 
 ```
 cordova create indexAppContentTestApp --template cordova-template-test-framework
@@ -138,4 +143,4 @@ cordova plugin add https://github.com/johanblomgren/cordova-plugin-indexappconte
 cordova plugin add https://github.com/johanblomgren/cordova-plugin-indexappcontent/tests
 ```
 
-As an alternative you can use [Cordova Paramedic](https://github.com/apache/cordova-paramedic) to run them
+As an alternative you can use [Cordova Paramedic](https://github.com/apache/cordova-paramedic) to run them.
